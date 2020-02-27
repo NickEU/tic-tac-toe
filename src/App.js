@@ -1,33 +1,42 @@
 import React from "react";
 
 class Square extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      label: this.props.value
-    };
-  }
-  handleClick = () => {
-    this.setState(_state => {
-      return { label: "X" };
-    });
-  };
   render() {
     return (
-      <button className='square' onClick={this.handleClick}>
-        {this.state.label}
+      <button className='square' onClick={this.props.onClick}>
+        {this.props.value}
       </button>
     );
   }
 }
 
 class Board extends React.Component {
-  renderSquare(i) {
-    return <Square value={i} />;
+  constructor(props) {
+    super(props);
+    this.state = { board: Array(9).fill(null), turnX: true };
   }
 
+  renderSquare(i) {
+    return (
+      <Square value={this.state.board[i]} onClick={() => this.handleClick(i)} />
+    );
+  }
+
+  handleClick = i => {
+    const newLabel = !this.state.turnX ? "O" : "X";
+    if (this.state.board[i] !== null) {
+      return;
+    }
+    const newBoard = [...this.state.board];
+    newBoard[i] = newLabel;
+    this.setState(_state => {
+      return { board: newBoard, turnX: !this.state.turnX };
+    });
+  };
+
   render() {
-    const status = "Next player: X";
+    const turnType = this.state.turnX ? "X" : "O";
+    const status = `Next player: ${turnType}`;
 
     return (
       <div>
